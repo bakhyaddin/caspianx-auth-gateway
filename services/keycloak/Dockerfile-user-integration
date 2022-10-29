@@ -1,0 +1,14 @@
+# this is for user migration from a custom relational database
+FROM maven:3.8-openjdk-11-slim AS build
+USER root
+COPY ./user-migration/ /app
+RUN mvn -f /app/pom.xml clean package
+
+FROM quay.io/keycloak/keycloak:19.0.2
+USER root
+COPY ./themes/updater/ /opt/keycloak/themes/updater/
+COPY --from=build /app/target/*.jar /opt/keycloak/providers/app.jar
+
+USER 1000
+
+ENTRYPOINT ["/opt/keycloak/bin/kc.sh", "start-dev"]
