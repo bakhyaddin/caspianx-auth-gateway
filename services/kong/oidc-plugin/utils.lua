@@ -51,6 +51,7 @@ function M.get_options(config, ngx)
     realm = config.realm,
     redirect_uri = config.redirect_uri,
     redirect_uri_path = config.redirect_uri_path or M.get_redirect_uri_path(ngx),
+    post_logout_redirect_uri = config.post_logout_redirect_uri,
     scope = config.scope,
     response_type = config.response_type,
     ssl_verify = config.ssl_verify,
@@ -58,8 +59,7 @@ function M.get_options(config, ngx)
     recovery_page_path = config.recovery_page_path,
     filters = parseFilters(config.filters),
     logout_path = config.logout_path,
-    post_logout_redirect_uri = config.post_logout_redirect_uri,
-    redirect_after_logout_uri = config.redirect_after_logout_uri
+    -- redirect_after_logout_uri = config.redirect_after_logout_uri
   }
 end
 

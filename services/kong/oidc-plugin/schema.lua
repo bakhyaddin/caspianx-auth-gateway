@@ -18,8 +18,8 @@ return {
     token_endpoint_auth_method = { type = "string", required = true, default = "client_secret_post" },
     session_secret = { type = "string", required = false },
     recovery_page_path = { type = "string" },
+    filters = { type = "string" },
     logout_path = { type = "string", required = false, default = '/logout' },
-    redirect_after_logout_uri = { type = "string", required = false, default = '/' },
-    filters = { type = "string" }
+    redirect_after_logout_uri = { type = "string", required = false, default = '/' }
   }
 }
