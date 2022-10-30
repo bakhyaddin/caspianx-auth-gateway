@@ -1209,8 +1209,6 @@ local function openidc_logout(opts, session)
     end
   end
 
-  print("redirect_after_logout_uri", opts.redirect_after_logout_uri)
-
   local headers = ngx.req.get_headers()
   local header = get_first(headers['Accept'])
   if header and header:find("image/png") then
@@ -1337,20 +1335,6 @@ function openidc_get_redirect_uri_path(opts)
   return opts.redirect_uri and openidc_get_path(opts.redirect_uri) or opts.redirect_uri_path
 end
 
--- function string_split(inputstr, sep)
---   if sep == nil then
---     sep = "%s"
---   end
-
---   local t = {}
---   for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
---     table.insert(t, str)
---   end
-
---   return t
--- end
-
--- main routine for OpenID Connect user authentication
 function openidc.authenticate(opts, target_url, unauth_action, session_opts)
 
   if opts.redirect_uri_path then
@@ -1398,16 +1382,14 @@ function openidc.authenticate(opts, target_url, unauth_action, session_opts)
   local try_to_renew = opts.renew_access_token_on_expiry == nil or opts.renew_access_token_on_expiry
   if session.present and session.data.authenticated
       and store_in_session(opts, 'access_token') then
+
+      if(session.data.user ~= nil and session.data.user.realm ~= nil and opts.realm) then
+        if session.data.user.realm ~= opts.realm then
+          openidc_logout(opts, session)
+          return nil, nil, target_url, session
+        end
+      end
       
-    -- local session_realm = string_split(session.data.original_url, "/")[1]
-    -- local request_realm = opts.realm
-    -- local request_realm = string_split(ngx.var.request_uri, "/")[1]
-
-    -- if session_realm ~= request_realm then
-    --   openidc_logout(opts, session)
-    --   return nil, nil, target_url, session
-    -- end
-
     -- refresh access_token if necessary
     access_token, err = openidc_access_token(opts, session, try_to_renew)
     if err then
