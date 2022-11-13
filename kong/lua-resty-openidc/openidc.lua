@@ -1335,6 +1335,7 @@ function openidc_get_redirect_uri_path(opts)
   return opts.redirect_uri and openidc_get_path(opts.redirect_uri) or opts.redirect_uri_path
 end
 
+-- main routine for OpenID Connect user authentication
 function openidc.authenticate(opts, target_url, unauth_action, session_opts)
 
   if opts.redirect_uri_path then
@@ -1383,7 +1384,7 @@ function openidc.authenticate(opts, target_url, unauth_action, session_opts)
   if session.present and session.data.authenticated
       and store_in_session(opts, 'access_token') then
 
-      if(session.data.user ~= nil and session.data.user.realm ~= nil and opts.realm) then
+      if(session.data.user and session.data.user.realm and opts.realm) then
         if session.data.user.realm ~= opts.realm then
           openidc_logout(opts, session)
           return nil, nil, target_url, session
